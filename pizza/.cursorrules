@@ -1,0 +1,145 @@
+# Pizza Ordering Application Summary
+
+## Project Overview
+This is a Next.js-based pizza ordering application with a modern UI and user authentication system. The application uses a red color scheme (#ed1f29) as its primary color and includes several key pages for user interaction.
+
+## Pages and Their Functions
+
+### 1. Login Page (/login)
+- Provides user authentication functionality
+- Features:
+  - Email and password input fields
+  - Form validation
+  - Error handling for invalid credentials
+  - Link to registration page
+  - Uses localStorage for user data persistence
+  - Redirects to homepage upon successful login
+
+### 2. Registration Page (/cadastro)
+- Handles new user registration
+- Features:
+  - Input fields for:
+    - Name
+    - Email
+    - Address
+    - Password
+  - Form validation
+  - Stores user data in localStorage
+  - Redirects to profile page after successful registration
+  - Link to login page for existing users
+
+### 3. Homepage (/homepage)
+- Main menu display page
+- Features:
+  - Header with menu button and user profile icon
+  - Menu section displaying various pizza options
+  - Each pizza item shows:
+    - Pizza image
+    - Name
+    - Ingredients list
+  - Currently displays four pizza options:
+    - Frango com Catupiry
+    - Portuguesa
+    - Carne seca com Catupiry
+    - Costela
+  - Each pizza is clickable and links to its detailed page
+
+### 4. Profile Page (/perfil)
+- Displays user information
+- Features:
+  - Back button to return to homepage
+  - User information display:
+    - Name
+    - Email
+    - Address
+  - User icon
+  - Responsive design
+  - Data is pulled from localStorage
+
+### 5. Dynamic Pizza Pages (/[slug])
+- Individual pages for each pizza type
+- Accessible through the homepage menu
+- Shows detailed information about specific pizzas
+
+## Technical Features
+- Built with Next.js and TypeScript
+- Uses Tailwind CSS for styling
+- Implements client-side state management
+- Uses localStorage for data persistence
+- Responsive design for various screen sizes
+- Modern UI with consistent styling
+- Uses HeroIcons for iconography
+
+## Security Features
+- Password protection for user accounts
+- Form validation
+- Error handling for invalid credentials
+- Secure data storage in localStorage
+
+## Database Schema (SQLite)
+
+### Users Table
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    address TEXT NOT NULL,
+    is_admin INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### Pizzas Table
+```sql
+CREATE TABLE pizzas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
+    image_url TEXT NOT NULL,
+    price REAL NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### Orders Table
+```sql
+CREATE TABLE orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    total_price REAL NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+### Order Items Table
+```sql
+CREATE TABLE order_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    pizza_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    price REAL NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (pizza_id) REFERENCES pizzas(id)
+);
+```
+
+### Relationships
+- One user can have many orders (1:N)
+- One order can have many order items (1:N)
+- One pizza can be in many order items (1:N)
+
+### Sample Data
+```sql
+-- Insert sample pizzas
+INSERT INTO pizzas (name, description, image_url, price) VALUES
+('Frango com Catupiry', 'Molho de tomate, queijo muçarela, frango desfiado temperado, Catupiry, orégano e massa tradicional', '/frango.webp', 49.90),
+('Portuguesa', 'Molho de tomate, queijo muçarela, presunto, ovos, cebola, azeitonas, pimentão, orégano e massa tradicional', '/portuguesa.jpeg', 45.90),
+('Carne seca com Catupiry', 'Molho de tomate, queijo muçarela, carne seca desfiada, Catupiry, cebola roxa, orégano e massa tradicional', '/pizza-carne-seca.jpg', 54.90),
+('Costela', 'Molho de tomate, queijo muçarela, costela desfiada, cebola caramelizada, orégano e massa tradicional', '/costela.jpg', 59.90);
+```

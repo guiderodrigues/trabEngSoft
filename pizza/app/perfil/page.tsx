@@ -2,20 +2,77 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeftIcon, UserIcon } from "@heroicons/react/24/outline";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  address: string;
+  isAdmin: boolean;
+}
+
 export default function Perfil() {
-  const [usuario, setUsuario] = useState<{ nome: string; email: string; endereco: string; senha: string } | null>(null);
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const dados = localStorage.getItem("usuario");
-    if (dados) {
-      setUsuario(JSON.parse(dados));
-    }
-  }, []);
+    const fetchUserData = async () => {
+      try {
+        // Get user data from localStorage
+        const userData = localStorage.getItem('user');
+        if (!userData) {
+          router.push('/login');
+          return;
+        }
 
-  if (!usuario) {
-    return <div className="min-h-screen flex items-center justify-center">Carregando perfil...</div>;
+        const { id } = JSON.parse(userData);
+
+        // Fetch fresh user data from API
+        const response = await fetch(`/api/user?id=${id}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao carregar dados do usuário');
+        }
+
+        setUser(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar dados do usuário');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-[#ed1f29] font-bold">Carregando perfil...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-[#ed1f29] font-bold">{error}</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -28,10 +85,15 @@ export default function Perfil() {
         </Link>
 
         {/* Título */}
-        <h1 className="text-3xl font-bold">Perfil</h1>
+        <h1 className="text-3xl font-bold">Meu Perfil</h1>
 
-        {/* Espaço para balancear o layout */}
-        <div className="w-8"></div>
+        {/* Botão de logout */}
+        <button
+          onClick={handleLogout}
+          className="text-sm underline"
+        >
+          Sair
+        </button>
       </div>
 
       {/* Conteúdo do Perfil */}
@@ -41,14 +103,19 @@ export default function Perfil() {
           <UserIcon className="w-16 h-16 text-[#ed1f29]" />
 
           <div>
-            <strong>Nome:</strong> {usuario.nome}
+            <strong>Nome:</strong> {user.name}
           </div>
           <div>
-            <strong>Email:</strong> {usuario.email}
+            <strong>Email:</strong> {user.email}
           </div>
           <div>
-            <strong>Endereço:</strong> {usuario.endereco}
+            <strong>Endereço:</strong> {user.address}
           </div>
+          {user.isAdmin && (
+            <div className="mt-2 text-[#ed1f29] font-bold">
+              Administrador
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,17 +1,73 @@
-import { UserIcon } from '@heroicons/react/24/outline';
+"use client";
+
+import { useEffect, useState } from "react";
+import { UserIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+
+interface Pizza {
+  id: number;
+  name: string;
+  description: string;
+  imageUrl: string;
+  price: number;
+}
+
 export default function Home() {
+  const [pizzas, setPizzas] = useState<Pizza[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchPizzas = async () => {
+      try {
+        const response = await fetch('/api/pizzas');
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Erro ao carregar pizzas');
+        }
+
+        setPizzas(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar pizzas');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPizzas();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-[#ed1f29] font-bold">Carregando cardápio...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-[#ed1f29] font-bold">{error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-[#ed1f29] text-white flex items-center justify-between p-4">
         <button className="text-2xl">☰</button>
-        <h1 className="text-3xl font-bold">Pizza</h1>
-        <button className="w-8 h-8 text-white">
-          <Link href="/perfil">
-          <UserIcon/>
+        <h1 className="text-3xl font-bold">Pizza Express</h1>
+        <div className="flex items-center gap-4">
+          <Link href="/meus-pedidos" className="text-white">
+            <ClipboardDocumentListIcon className="w-6 h-6" />
           </Link>
-        </button>
+          <Link href="/perfil" className="text-white">
+            <UserIcon className="w-6 h-6" />
+          </Link>
+        </div>
       </header>
 
       {/* Conteúdo */}
@@ -21,69 +77,32 @@ export default function Home() {
 
           {/* Lista de pizzas */}
           <div className="space-y-4">
-              <Link href="/frango-com-catupiry" className='flex'>
-            <div className="bg-white text-gray-600 font-semibold rounded-lg shadow p-4 flex">
-              <img
-                src="/frango.webp"
-                alt="Frango com Catupiry"
-                className="w-24 h-24 object-cover rounded"
-              />
-              <div className="ml-4">
-                <h3 className="text-lg font-bold">Frango com Catupiry</h3>
-                <p className="text-sm text-gray-400">
-                  Ingredientes: Molho de tomate, queijo muçarela, frango desfiado temperado, Catupiry, orégano e massa tradicional.
-                </p>
-              </div>
-            </div>
-                </Link>
-
-            <Link href="/portuguesa" className='flex'>
-            <div className="bg-white text-gray-600 font-semibold rounded-lg shadow p-4 flex">
-              <img
-                src="/portuguesa.jpeg"
-                alt="Portuguesa"
-                className="w-24 h-24 object-cover rounded"
-              />
-              <div className="ml-4">
-                <h3 className="text-lg font-bold">Portuguesa</h3>
-                <p className="text-sm text-gray-400">
-                  Ingredientes: Molho de tomate, queijo muçarela, presunto, ovos, cebola, azeitonas, pimentão, orégano e massa tradicional.
-                </p>
-              </div>
-            </div>
-            </Link>
-
-            <Link href="/carne-seca-catupiry" className='flex'>
-            <div className="bg-white text-gray-600 font-semibold rounded-lg shadow p-4 flex">
-              <img
-                src="/pizza-carne-seca.jpg"
-                alt="Carne seca com Catupiry"
-                className="w-24 h-24 object-cover rounded"
-              />
-              <div className="ml-4">
-                <h3 className="text-lg font-bold">Carne seca com Catupiry</h3>
-                <p className="text-sm text-gray-400">
-                  Ingredientes: Molho de tomate, queijo muçarela, carne seca desfiada, Catupiry, cebola roxa, orégano e massa tradicional.
-                </p>
-              </div>
-            </div>
-            </Link>
-
-            <Link href="/costela" className='flex'>
-            <div className="bg-white text-gray-600 font-semibold rounded-lg shadow p-4 flex">
-              <img
-                src="/costela.jpg"
-                alt="Costela"
-                className="w-24 h-24 object-cover rounded"
-              />
-              <div className="ml-4">
-                <h3 className="text-lg font-bold">Costela</h3>
-                <p className="text-sm text-gray-400">
-                  Ingredientes: Molho de tomate, queijo muçarela, presunto, ovos, cebola, azeitonas, pimentão, orégano e massa tradicional.
-                </p>
-              </div>
-            </div>
-            </Link>
+            {pizzas.map((pizza) => (
+              <Link 
+                key={pizza.id} 
+                href={`/${pizza.id}`} 
+                className='flex'
+              >
+                <div className="bg-white text-gray-600 font-semibold rounded-lg shadow p-4 flex w-full">
+                  <img
+                    src={pizza.imageUrl}
+                    alt={pizza.name}
+                    className="w-24 h-24 object-cover rounded"
+                  />
+                  <div className="ml-4 flex-grow">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-lg font-bold">{pizza.name}</h3>
+                      <span className="text-[#ed1f29] font-bold">
+                        R$ {pizza.price.toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {pizza.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </main>
