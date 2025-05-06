@@ -41,10 +41,7 @@ export default function Login() {
         throw new Error(data.error || 'Erro ao fazer login');
       }
 
-      // Store user data in localStorage (without password)
       localStorage.setItem('user', JSON.stringify(data));
-      
-      // Redirect to homepage
       router.push('/homepage');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao fazer login');
@@ -54,28 +51,27 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-[#ed1f29] mb-6">Login</h1>
-        
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-
+    <div className="min-h-screen bg-[#ed1f29] flex items-center justify-center p-4">
+      <div className="bg-[#ed1f29] rounded-lg w-full max-w-sm flex flex-col items-center">
         {/* Logo */}
         <img
           src="/pizzalogo.jpg"
           alt="Logo Pizza"
-          className="w-80 h-40mb-6"
+          className="w-80 h-40 mb-6"
         />
+
+        {/* Mensagem de erro */}
+        {error && (
+          <div className="bg-yellow-100 border border-yellow-500 text-yellow-800 px-4 py-2 rounded mb-4 w-full text-center font-semibold">
+            {error}
+          </div>
+        )}
 
         {/* Formulário */}
         <form className="w-full px-8" onSubmit={handleLogin}>
           {/* Email */}
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold text-sm mb-2" htmlFor="email">
+            <label className="block text-white font-bold text-sm mb-2" htmlFor="email">
               Email
             </label>
             <input
@@ -85,14 +81,14 @@ export default function Login() {
               value={formData.email}
               onChange={handleChange}
               placeholder="exemplo@exemplo.com"
-              className="w-full p-2 bg-gray-200 text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
+              className="w-full p-2 bg-white text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
               required
             />
           </div>
 
           {/* Senha */}
           <div className="mb-6">
-            <label className="block text-gray-700 font-bold text-sm mb-2" htmlFor="password">
+            <label className="block text-white font-bold text-sm mb-2" htmlFor="password">
               Senha
             </label>
             <input
@@ -102,7 +98,7 @@ export default function Login() {
               value={formData.password}
               onChange={handleChange}
               placeholder="******"
-              className="w-full p-2 bg-gray-200 text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
+              className="w-full p-2 bg-white text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
               required
             />
           </div>
@@ -111,14 +107,14 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#ed1f29] text-white font-bold py-2 rounded-full hover:bg-red-700 transition disabled:opacity-50"
+            className="w-full bg-white text-[#ed1f29] font-bold py-2 rounded-full hover:bg-gray-100 transition disabled:opacity-50"
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
         {/* Link para cadastro */}
-        <p className="text-gray-700 text-sm mt-4 mb-2">
+        <p className="text-white text-sm mt-4 mb-2">
           Não tem uma conta?{" "}
           <a href="/cadastro" className="underline font-semibold">
             Cadastrar
