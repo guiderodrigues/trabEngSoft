@@ -2,161 +2,126 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function Cadastro() {
-  const router = useRouter();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    address: "",
-    password: "",
-  });
+export default function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
     try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ name, email, address, password }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao criar usuário');
+        throw new Error(data.error || "Erro ao fazer cadastro");
       }
 
-      // Store user data in localStorage (without password)
-      localStorage.setItem('user', JSON.stringify(data));
-      
+      // Store user data in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       // Redirect to profile page
-      router.push('/perfil');
+      router.push("/perfil");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar usuário');
-    } finally {
-      setLoading(false);
+      setError(err instanceof Error ? err.message : "Erro ao fazer cadastro");
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#ed1f29] flex items-center justify-center p-4">
-      <div className="bg-[#ed1f29] rounded-lg w-full max-w-sm flex flex-col items-center">
-        {/* Logo */}
-        <img
-          src="/pizzalogo.jpg"
-          alt="Logo Pizza"
-          className="w-80 h-40mb-6"
-        />
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center text-[#ed1f29] mb-6">Cadastro</h1>
+        
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
 
-        {/* Formulário */}
-        <form className="w-full px-8" onSubmit={handleSubmit}>
-          {/* Nome */}
-          <div className="mb-4">
-            <label className="block text-white font-bold text-sm mb-2" htmlFor="name">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Nome
             </label>
             <input
-              id="name"
-              name="name"
               type="text"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Fulano da Silva"
-              className="w-full p-2 bg-white text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#ed1f29] focus:ring-[#ed1f29]"
               required
             />
           </div>
 
-          {/* Email */}
-          <div className="mb-4">
-            <label className="block text-white font-bold text-sm mb-2" htmlFor="email">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
-              id="email"
-              name="email"
               type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="exemplo@exemplo.com"
-              className="w-full p-2 bg-white text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#ed1f29] focus:ring-[#ed1f29]"
               required
             />
           </div>
 
-          {/* Endereço */}
-          <div className="mb-4">
-            <label className="block text-white font-bold text-sm mb-2" htmlFor="address">
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
               Endereço
             </label>
             <input
-              id="address"
-              name="address"
               type="text"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Rua Exemplo, 123 - Bairro"
-              className="w-full p-2 bg-white text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
+              id="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#ed1f29] focus:ring-[#ed1f29]"
               required
             />
           </div>
 
-          {/* Senha */}
-          <div className="mb-6">
-            <label className="block text-white font-bold text-sm mb-2" htmlFor="password">
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Senha
             </label>
             <input
-              id="password"
-              name="password"
               type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="******"
-              className="w-full p-2 bg-white text-gray-950 rounded-full text-center placeholder-gray-400 focus:outline-none"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#ed1f29] focus:ring-[#ed1f29]"
               required
-              minLength={6}
             />
           </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="text-yellow-300 font-bold text-center mb-4">{error}</div>
-          )}
-
-          {/* Botão */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-white text-[#ed1f29] font-bold py-2 rounded-full hover:bg-gray-100 transition disabled:opacity-50"
+            className="w-full bg-[#ed1f29] text-white py-2 px-4 rounded-md hover:bg-[#d11a23] transition-colors"
           >
-            {loading ? 'Cadastrando...' : 'Cadastrar'}
+            Cadastrar
           </button>
         </form>
 
-        {/* Link para login */}
-        <p className="text-white text-sm mt-4 mb-2">
+        <p className="mt-4 text-center text-sm text-gray-600">
           Já tem uma conta?{" "}
-          <a href="/login" className="underline font-semibold">
-            Entrar
-          </a>
+          <Link href="/login" className="text-[#ed1f29] hover:underline">
+            Faça login
+          </Link>
         </p>
       </div>
     </div>

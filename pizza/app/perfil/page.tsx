@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, UserIcon, PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface User {
   id: number;
@@ -18,6 +18,9 @@ export default function Perfil() {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [newAddress, setNewAddress] = useState("");
+  const [updateError, setUpdateError] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,6 +43,7 @@ export default function Perfil() {
         }
 
         setUser(data);
+        setNewAddress(data.address);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erro ao carregar dados do usuário');
       } finally {
@@ -53,6 +57,46 @@ export default function Perfil() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     router.push('/login');
+  };
+
+  const handleAddressUpdate = async () => {
+    if (!user) return;
+
+    try {
+      setUpdateError("");
+      const response = await fetch('/api/user', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: user.id,
+          address: newAddress,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao atualizar endereço');
+      }
+
+      setUser(data);
+      setIsEditingAddress(false);
+    } catch (err) {
+      setUpdateError(err instanceof Error ? err.message : 'Erro ao atualizar endereço');
+    }
+  };
+
+  const startEditing = () => {
+    setIsEditingAddress(true);
+    setNewAddress(user?.address || '');
+  };
+
+  const cancelEditing = () => {
+    setIsEditingAddress(false);
+    setNewAddress(user?.address || '');
+    setUpdateError("");
   };
 
   if (loading) {
@@ -108,8 +152,49 @@ export default function Perfil() {
           <div>
             <strong>Email:</strong> {user.email}
           </div>
-          <div>
-            <strong>Endereço:</strong> {user.address}
+          <div className="w-full">
+            <div className="flex items-center justify-between">
+              <strong>Endereço:</strong>
+              {!isEditingAddress ? (
+                <button
+                  onClick={startEditing}
+                  className="text-[#ed1f29] hover:text-[#c41820]"
+                >
+                  <PencilIcon className="w-5 h-5" />
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleAddressUpdate}
+                    className="text-green-600 hover:text-green-700"
+                  >
+                    <CheckIcon className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={cancelEditing}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
+            </div>
+            {isEditingAddress ? (
+              <div className="mt-2">
+                <input
+                  type="text"
+                  value={newAddress}
+                  onChange={(e) => setNewAddress(e.target.value)}
+                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#ed1f29]"
+                  placeholder="Digite seu endereço"
+                />
+                {updateError && (
+                  <p className="text-red-600 text-sm mt-1">{updateError}</p>
+                )}
+              </div>
+            ) : (
+              <div>{user.address}</div>
+            )}
           </div>
           {user.isAdmin && (
             <div className="mt-2 text-[#ed1f29] font-bold">

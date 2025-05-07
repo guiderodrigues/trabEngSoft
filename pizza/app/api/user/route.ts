@@ -39,4 +39,34 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const { id, address } = await request.json();
+
+    if (!id || !address) {
+      return NextResponse.json(
+        { error: 'ID do usuário e endereço são obrigatórios' },
+        { status: 400 }
+      );
+    }
+
+    // Update user address
+    const updatedUser = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: { address },
+    });
+
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = updatedUser;
+
+    return NextResponse.json(userWithoutPassword);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return NextResponse.json(
+      { error: 'Erro ao atualizar usuário' },
+      { status: 500 }
+    );
+  }
 } 
