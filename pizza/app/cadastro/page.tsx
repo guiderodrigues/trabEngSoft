@@ -17,7 +17,7 @@ export default function Register() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +35,7 @@ export default function Register() {
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Redirect to profile page
-      router.push("/perfil");
+      router.push("/login");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer cadastro");
     }

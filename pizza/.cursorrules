@@ -110,8 +110,23 @@ CREATE TABLE orders (
     user_id INTEGER NOT NULL,
     total_price REAL NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
+    payment_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (payment_id) REFERENCES payments(id)
+);
+```
+
+### Payments Table
+```sql
+CREATE TABLE payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    card_number TEXT NOT NULL,
+    card_holder TEXT NOT NULL,
+    expiry_date TEXT NOT NULL,
+    cvv TEXT NOT NULL,
+    payment_status TEXT NOT NULL DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
 

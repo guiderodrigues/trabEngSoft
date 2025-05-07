@@ -42,9 +42,24 @@ model Order {
   totalPrice Float       @map("total_price")
   status     String      @default("pending")
   items      OrderItem[]
+  payment    Payment?
   createdAt  DateTime    @default(now()) @map("created_at")
 
   @@map("orders")
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  cardNumber    String   @map("card_number")
+  cardHolder    String   @map("card_holder")
+  expiryDate    String   @map("expiry_date")
+  cvv           String
+  paymentStatus String   @default("pending") @map("payment_status")
+  order         Order    @relation(fields: [orderId], references: [id])
+  orderId       Int      @unique @map("order_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("payments")
 }
 
 model OrderItem {

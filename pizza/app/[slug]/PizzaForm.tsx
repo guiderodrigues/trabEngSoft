@@ -56,8 +56,8 @@ export default function PizzaForm({ basePrice, pizzaId }: PizzaFormProps) {
                 throw new Error(data.error || 'Erro ao criar pedido');
             }
 
-            // Redirect to homepage after successful order
-            router.push('/homepage');
+            // Redirect to payment page with order ID
+            router.push(`/pagamento?orderId=${data.id}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Erro ao criar pedido');
         } finally {
