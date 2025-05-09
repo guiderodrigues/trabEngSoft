@@ -58,7 +58,6 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-[#ed1f29] text-white flex items-center justify-between p-4">
-        <button className="text-2xl">☰</button>
         <h1 className="text-3xl font-bold">Pizza Express</h1>
         <div className="flex items-center gap-4">
           <Link href="/meus-pedidos" className="text-white">
