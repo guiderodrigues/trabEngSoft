@@ -88,7 +88,7 @@ export default function OrdersList() {
         <div key={order.id} className="bg-white rounded-lg shadow p-4">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h3 className="font-bold">Pedido #{order.id}</h3>
+              <h3 className="font-bold text-gray-700">Pedido #{order.id}</h3>
               <p className="text-sm text-gray-600">
                 Data: {new Date(order.createdAt).toLocaleString('pt-BR')}
               </p>
@@ -110,14 +110,14 @@ export default function OrdersList() {
           </div>
 
           <div className="border-t pt-4">
-            <h4 className="font-bold mb-2">Itens do Pedido:</h4>
+            <h4 className="font-bold mb-2 text-gray-700">Itens do Pedido:</h4>
             <div className="space-y-2">
               {order.items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
-                  <span>
+                  <span className="text-gray-600">
                     {item.quantity}x {item.pizza.name}
                   </span>
-                  <span>
+                  <span className='text-black'>
                     R$ {(item.price * item.quantity).toFixed(2)}
                   </span>
                 </div>

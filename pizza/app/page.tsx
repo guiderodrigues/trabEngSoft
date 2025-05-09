@@ -10,5 +10,5 @@ export default function Home() {
     router.push("/login");
   }, [router]);
 
-  return null; // nada é renderizado, só redireciona
+  return null;
 }

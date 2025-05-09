@@ -74,29 +74,29 @@ export default function PaymentPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="cardNumber" className="block text-sm font-medium text-black">
               Número do Cartão
             </label>
             <input
               type="text"
               id="cardNumber"
               maxLength={16}
-              placeholder="1234 5678 9012 3456"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
+              placeholder="1234567890123456"
+              className="mt-1 block w-full text-gray-600 rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
               value={formData.cardNumber}
               onChange={(e) => setFormData({ ...formData, cardNumber: e.target.value })}
             />
           </div>
 
           <div>
-            <label htmlFor="cardHolder" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="cardHolder" className="block text-sm font-medium text-black">
               Nome no Cartão
             </label>
             <input
               type="text"
               id="cardHolder"
               placeholder="NOME COMO ESTÁ NO CARTÃO"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
+              className="mt-1 text-gray-600 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
               value={formData.cardHolder}
               onChange={(e) => setFormData({ ...formData, cardHolder: e.target.value })}
             />
@@ -104,7 +104,7 @@ export default function PaymentPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="expiryDate" className="block text-sm font-medium text-black">
                 Data de Expiração
               </label>
               <input
@@ -112,14 +112,14 @@ export default function PaymentPage() {
                 id="expiryDate"
                 placeholder="MM/AA"
                 maxLength={5}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
+                className="mt-1 text-gray-600 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
                 value={formData.expiryDate}
                 onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
               />
             </div>
 
             <div>
-              <label htmlFor="cvv" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="cvv" className="block text-sm font-medium text-black">
                 CVV
               </label>
               <input
@@ -127,7 +127,7 @@ export default function PaymentPage() {
                 id="cvv"
                 maxLength={3}
                 placeholder="123"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
+                className="mt-1 text-gray-600 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500"
                 value={formData.cvv}
                 onChange={(e) => setFormData({ ...formData, cvv: e.target.value })}
               />
