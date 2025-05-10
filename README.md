@@ -4,6 +4,16 @@ Este é um projeto [Next.js](https://nextjs.org) criado com [`create-next-app`](
 
 ## 🛠️ Primeiros Passos
 
+Instalar tudo que é necessário, execute os comandos a seguir no terminal:
+
+```bash
+npm install @heroicons/react
+
+npm install @prisma/client
+
+npx prisma generate
+````
+
 Para iniciar o servidor de desenvolvimento, execute um dos comandos abaixo no terminal:
 
 ```bash
